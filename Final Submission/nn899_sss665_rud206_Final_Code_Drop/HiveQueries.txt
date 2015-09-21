@@ -1,0 +1,49 @@
+hdfs dfs -mkdir project
+
+hdfs dfs -put reviews.psv project
+
+hdfs dfs -put cleaned_business_data.psv project
+
+hdfs dfs -put user_data.psv project
+
+CREATE TABLE businesses (ambienceDivey string,dietVegan string,happyHour string,openThr string,orderAtCounter string,openFri string,categories string,latitude string,seatingOutdoor string,alcohol string,ambienceClassy string,payMasterCard string,parkingLot string,businessID string,ambienceTouristy string,corkage string,openTues string,goodForBrunch string,payAmex string,name string,openMon string,waiterService string,parkingStreet string,ambienceHipster string,byobCorkage string,musicLive string,dietDairyFree string,musicBackground string,goodForDinner string,goodForBreakfast string,parkingGarage string,musicKaraoke string,goodForDancing string,reviewCount int,state string,acceptCreditCards string,closeFri string,goodForLunch string,goodForKids string,parkingValet string,takeOut string,fullAddress string,closeThr string,paymentCash string,goodForDessert string,musicVideo string,dietHalal string,takesReservations string,openSat string,allowedAge string,ambienceTrendy string,delivery string,closeWed string,wifi string,open string,city string,paymentDiscover string,wheelchair string,dietGlutenFree string,stars double,paymentVisa string,type string,caters string,ambienceIntimate string,musicPlaylist string,goodForLateNight string,priceRange int,coatCheck string,longitude string,closeMon string,closeTue string,closeSat string,goodForKids2 string,parkingValidated string,openSun string,acceptsInsurance string,musicDj string,dietSoyFree string,hasTv string,closeSun string,ambienceCasual string,byAppointmentOnly string,dietKosher string,dogsAllowed string,driveThru string,dietVegetarian string,openWed string,noiseLevel string,smoking string,attire string,goodForGroups string,neighborhoods string,openAllDay string,ambienceRomantic string,musicJukebox string,ambienceUpscale string)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '|';
+
+LOAD DATA INPATH '/user/cloudera/project/cleaned_business_data.psv' OVERWRITE INTO TABLE businesses;
+
+CREATE TABLE reviews (userId string, reviewId string, text string, votesCool string, businessId string, votesFunny string, stars string, date string, type string, votesUseful string) ROW FORMAT DELIMITED FIELDS TERMINATED BY '|';
+
+
+LOAD DATA INPATH '/user/cloudera/project/reviews.csv' OVERWRITE INTO TABLE reviews;
+
+CREATE TABLE users (reviewCount int, averageStars double, userName string, userId  string, votesCool int, votesFunny int, votesUseful int) 
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '|';
+
+LOAD DATA INPATH '/user/cloudera/project/user_data.psv' OVERWRITE INTO TABLE users;
+
+create table refinedReviews as select reviews.* from reviews join businesses on (businesses.businessID = reviews.businessId)
+
+hdfs dfs -put ReviewWeight.jar
+
+add jar ReviewWeight.jar;
+
+CREATE FUNCTION reviewValCalc AS 'com.reviewing.hive.udf.ReviewWeight';
+
+create table weightedReview (reviewWeight decimal, reviewId string, text string, stars string);
+
+insert overwrite table weightedReview select reviewValCalc(regexp_replace(text,'\\"|\\"',''), stars) as weight, reviewId, text, stars from refinedReviews;
+
+create table cleanReviews as select * from refinedReviews where (length(user_id) = 22 and length(review_id) = 22 and length(business_id) = 22);
+
+create table finalReviews as select cleanReviews.user_id, cleanReviews.review_id, cleanReviews.business_id, weightedReview.reviewweight from cleanReviews join weightedReview on (weightedReview.reviewid = cleanReviews.review_id);
+
+create table refinedUsers as select users.* from users join finalReviews on (users.userId = finalReviews.user_id);
+
+select distinct userId from refinedUsers; //Time taken: 35.631 seconds, Fetched: 194054 row(s) !!
+
+select count(*) from users left join finalReviews on (users.userId = finalReviews.user_id);
+
+select max(reviewcount) from refinedUsers;
+
+insert overwrite local directory '/home/cloudera/analytics' row format delimited fields terminated by ',' select c.userid,a.reviewweight,b.reviewweight,a.businessid, c.reviewweight from finalreviews as a join finalreviews as b on (a.userid='DrWLhrK8WMZf7Jb-Oqc7ww' and a.businessid=b.businessid) join finalreviews as c on (c.businessid='4bEjOyTaDG24SY5TxsaUNQ' and b.userid=c.userid);

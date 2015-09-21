@@ -1,0 +1,1 @@
+Rahul Desai(rud206@nyu.edu) and Nikita Amartya(nikita.amartya@nyu.edu) and me, Suruchi Sharma(sss665@nyu.edu) have collectively worked on the contents of this folder. 

@@ -1,0 +1,50 @@
+Test 1: Between user: Brad & business: Mon Ami Gabi
+select * from finalreviews where (business_id='4bEjOyTaDG24SY5TxsaUNQ' and user_id='DrWLhrK8WMZf7Jb-Oqc7ww');
+This query checks whether the user has reviewed the business or  not?
+If the user has not reviewed the restaurant then the second query is executed.
+If the user has reviewed the restaurant then there is nothing to predict
+insert overwrite local directory '/home/cloudera/analytics' row format delimited fields terminated by ',' select c.user_id,a.reviewweight,b.reviewweight,a.business_id, c.reviewweight from finalreviews as a join finalreviews as b on (a.user_id='DrWLhrK8WMZf7Jb-Oqc7ww' and a.business_id=b.business_id) join finalreviews as c on (c.business_id='4bEjOyTaDG24SY5TxsaUNQ' and b.user_id=c.user_id);
+The output of this query is a file
+This file is given as input to a java code which generates the recommendation
+Recommendation is 81.74891818913298 (4.5 stars)
+
+Similarly for other user, restaurant combinations...
+
+Test 2: Between user: Jennifer  & business: Earl of Sandwich
+select * from finalreviews where (business_id='2e2e7WgqU1BnpxmQL5jbfw' and user_id='3gIfcQq5KxAegwCPXc83cQ');
+insert overwrite local directory '/home/cloudera/analytics' row format delimited fields terminated by ',' select c.user_id,a.reviewweight,b.reviewweight,a.business_id, c.reviewweight from finalreviews as a join finalreviews as b on (a.user_id='3gIfcQq5KxAegwCPXc83cQ' and a.business_id=b.business_id) join finalreviews as c on (c.business_id='2e2e7WgqU1BnpxmQL5jbfw' and b.user_id=c.user_id);
+Recommendation is 81.62325260689808 (4.5 stars)
+
+
+Test 3: Between user: Jennifer  & business: Wicked Spoon
+select * from finalreviews where (business_id='zt1TpTuJ6y9n551sw9TaEg' and user_id='pEVf8GRshP9HUkSpizc9LA');
+insert overwrite local directory '/home/cloudera/analytics' row format delimited fields terminated by ',' select c.user_id,a.reviewweight,b.reviewweight,a.business_id, c.reviewweight from finalreviews as a join finalreviews as b on (a.user_id='pEVf8GRshP9HUkSpizc9LA' and a.business_id=b.business_id) join finalreviews as c on (c.business_id='zt1TpTuJ6y9n551sw9TaEg' and b.user_id=c.user_id);
+Recommendation is 76.45950240365013 (4 stars)
+
+
+Test 4: Between user: Westie & business: Serendipity 3
+select * from finalreviews where (business_id='Xhg93cMdemu5pAMkDoEdtQ' and user_id='38JK-SfO9NkAGs1RwlH2Gw');
+insert overwrite local directory '/home/cloudera/analytics' row format delimited fields terminated by ',' select c.user_id,a.reviewweight,b.reviewweight,a.business_id, c.reviewweight from finalreviews as a join finalreviews as b on (a.user_id='38JK-SfO9NkAGs1RwlH2Gw' and a.business_id=b.business_id) join finalreviews as c on (c.business_id='Xhg93cMdemu5pAMkDoEdtQ' and b.user_id=c.user_id);
+Recommendation is 64.39916018768487 (3.5 stars)
+
+select * from finalreviews where (business_id='xfwRO04KbAPw_zRotCfWQQ' and user_id='90a6z--_CUrl84aCzZyPsg');
+This user has already reviewed this restaurant...
+
+
+Test 5: Between user: Michael & business: Mon Ami Gabi
+select * from finalreviews where (business_id='4bEjOyTaDG24SY5TxsaUNQ' and user_id='90a6z--_CUrl84aCzZyPsg');
+insert overwrite local directory '/home/cloudera/analytics' row format delimited fields terminated by ',' select c.user_id,a.reviewweight,b.reviewweight,a.business_id, c.reviewweight from finalreviews as a join finalreviews as b on (a.user_id='90a6z--_CUrl84aCzZyPsg' and a.business_id=b.business_id) join finalreviews as c on (c.business_id='4bEjOyTaDG24SY5TxsaUNQ' and b.user_id=c.user_id);
+Recommendation is 80.43367149239633 (4.5 stars)
+
+
+Test 6: Between user: Norm & business: Hash House A Go Go
+select * from finalreviews where (business_id='xfwRO04KbAPw_zRotCfWQQ' and user_id='m7vtKWpZ9wdEQ95wJxrMrg');
+insert overwrite local directory '/home/cloudera/analytics' row format delimited fields terminated by ',' select c.user_id,a.reviewweight,b.reviewweight,a.business_id, c.reviewweight from finalreviews as a join finalreviews as b on (a.user_id='m7vtKWpZ9wdEQ95wJxrMrg' and a.business_id=b.business_id) join finalreviews as c on (c.business_id='xfwRO04KbAPw_zRotCfWQQ' and b.user_id=c.user_id);
+Recommendation is 74.97947685340677 (4 stars)
+
+Test 7:
+User = Jennifer
+Business Name = Arriba Mexican Grill
+select * from finalreviews where (business_id='xI0UZH734lJtm39DbLf-Bw' and user_id='pEVf8GRshP9HUkSpizc9LA');
+insert overwrite local directory '/home/cloudera/analytics' row format delimited fields terminated by ',' select c.user_id,a.reviewweight,b.reviewweight,a.business_id, c.reviewweight from finalreviews as a join finalreviews as b on (a.user_id='pEVf8GRshP9HUkSpizc9LA' and a.business_id=b.business_id) join finalreviews as c on (c.business_id='xI0UZH734lJtm39DbLf-Bw' and b.user_id=c.user_id);
+Recommendation is 53.90243787642131
